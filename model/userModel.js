@@ -1,0 +1,30 @@
+const mongoose=require("mongoose")
+const Schema = mongoose.Schema
+
+const userSchema = new Schema({
+    userEmail:{
+        type: String,
+        required: [true,'mail must be provided']
+    },
+    userPhoneNumber: {
+        type: Number,
+        required: [true, 'Phone Number must be provied']
+    },
+    userName : {
+        type : String,
+        required: [true, "UserName must be provided"]
+    },
+    
+    userPassword: {
+        type : String,
+        required: [true, 'Password must be provided']
+    },
+    role: {
+        type: String,
+        enum: ["customer","admin"],
+        default: "customer"
+    }
+})
+
+const User = mongoose.model("User",userSchema)
+module.exports = User

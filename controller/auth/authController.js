@@ -126,6 +126,7 @@ exports.verifyOtp = async (req,res)=>{
 
     //dispose OTP so that it canot be use more than one time
     userExists[0].otp = undefined
+    userExists[0].isOtpVerified = true
     await userExists[0].save()
     res.status(200).json({
         message: "OTP is Correct"
@@ -152,9 +153,15 @@ exports.resetPassword = async (req,res)=>{
         })
     }
 
+    if(userExists[0].isOtpVerified !== true){
+        return res.status(403).json({
+            message: "You can't perform the action"
+        })
+    }
+
     userExists[0].userPassword = bcrypt.hashSync(newPassword,10)
+    userExists[0].isOtpVerified = false;
     await userExists[0].save()
-    
     res.status(200).json({
         message: "Password changed successfully"
     })

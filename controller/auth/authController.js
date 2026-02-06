@@ -1,6 +1,7 @@
 const User = require("../../model/userModel")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
+const sendEmail = require("../../services/sendEmail")
 
 //Register User
 exports.registerUser = async (req,res)=>{
@@ -65,3 +66,39 @@ exports.loginUser =  async (req,res)=>{
         message: "Invalid Email or Password"
     })
 }
+
+// forgot Password
+exports.forgotPassword =  async (req, res)=>{
+    const {email} = req.body;
+
+    if(!email){
+        return res.status(400).json({
+            message : "Plase enter valid email"
+        })
+    }
+
+    // check if that email is refgistered or not
+    const userExist = await User.find({userEmail: email})
+    if(userExist.length == 0){
+        return res.status(404).json({
+            message : "Email is not registered"
+        })
+    }
+
+    //send OTP to that email
+    const otp = Math.floor(1000 + Math.random() * 9000)
+    userExist[0].otp = otp
+    await userExist[0].save()
+
+    await sendEmail({
+        email : email,
+        subject: "Reset Password",
+        message: `Your OPT is ${otp}. Don't share anyone`
+
+    })
+    res.status(200).json({
+        message: "OPT sent successfully"
+    })
+
+}
+

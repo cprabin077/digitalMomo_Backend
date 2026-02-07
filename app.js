@@ -8,6 +8,7 @@ const { registerUser, loginUser } = require("./controller/auth/authController")
 
 //ROUTES HERE
 const authRoute = require("./routes/authRoute")
+const productRoute = require("./routes/productRoute")
 
 
 // Routes end here
@@ -30,13 +31,9 @@ app.get("/",(req,res)=>{
 })
 
 
-app.use("",authRoute)
-// /register ->
-// /login
+app.use("/api",authRoute)
+app.use("/api",productRoute)
 
-// app.use("/hello", authRoute)
-// /hello/register
-// /hello/login
 
 
 const PORT = process.env.PORT

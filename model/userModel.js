@@ -2,9 +2,10 @@ const mongoose=require("mongoose")
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
+    
     userEmail:{
         type: String,
-        required: [true,'mail must be provided']
+        required: [true,'Mail must be provided']
     },
     userPhoneNumber: {
         type: Number,
@@ -28,11 +29,13 @@ const userSchema = new Schema({
     otp : {
         type: Number
     },
+
     isOtpVerified: {
         type: Boolean,
         default: false
     }
-
+},{
+    timestamps: true
 })
 
 const User = mongoose.model("User",userSchema)

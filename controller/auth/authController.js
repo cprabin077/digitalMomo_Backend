@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken")
 const sendEmail = require("../../services/sendEmail")
 
 //Register User
-exports.registerUser = async (req,res)=>{
+exports.registerUser = async (req, res)=>{
     const {email, username, password, phoneNumber} = req.body
     if(!email || !username || !password || !phoneNumber){
        return res.status(400).json({
@@ -32,7 +32,7 @@ exports.registerUser = async (req,res)=>{
 }
 
 //Login User
-exports.loginUser =  async (req,res)=>{
+exports.loginUser =  async (req, res)=>{
     const {email, password} = req.body
     if(!email || !password){
         return res.status(400).json({
@@ -102,7 +102,7 @@ exports.forgotPassword =  async (req, res)=>{
 }
 
 // VERIFY OTP
-exports.verifyOtp = async (req,res)=>{
+exports.verifyOtp = async (req, res)=>{
     const {email,otp} = req.body
     if(!email || !otp){
         return res.status(400).json({
@@ -133,8 +133,9 @@ exports.verifyOtp = async (req,res)=>{
     })
 }
 
-// RESET PASSOWORD
-exports.resetPassword = async (req,res)=>{
+// RESET Password
+exports.resetPassword = async (req, res)=>{
+
     const {email, newPassword, confirmPassword}=req.body
     if(!email || !newPassword || !confirmPassword){
         return res.status(400).json({

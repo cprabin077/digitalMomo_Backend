@@ -2,9 +2,16 @@ const Product = require("../../../model/productModel")
 
 
 exports.createProduct = async (req, res) => {
-    
+    const file = req.file
+    let filePath
+    if(!file){
+        filePath="https://d2v5dzhdg4zhx3.cloudfront.net/web-assets/images/storypages/primary/ProductShowcasesampleimages/JPEG/Product+Showcase-1.jpg"
+    }else{
+        filePath = req.file.filename
+    }
+   
     const {productName, productPrice, productDescription, productStatus, productStockQty} = req.body
-    if(!productName || !productPrice || !productDescription || !productStatus || !productStockQty){
+    if(!productName || !productPrice || !productDescription || !productStatus || !productStockQty ){
         return res.status(400).json({
             message : "Please fill all the boxes"
         })
@@ -17,7 +24,8 @@ exports.createProduct = async (req, res) => {
         productPrice,
         productDescription,
         productStatus,
-        productStockQty
+        productStockQty,
+        productImage: "http://localhost:3000/" + filePath
     })
 
     res.status(200).json({

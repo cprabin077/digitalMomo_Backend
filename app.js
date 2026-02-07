@@ -19,8 +19,11 @@ require("dotenv").config()
 app.use(express.json())
 app.use(express.urlencoded({extended : true}))
 
+// requesting nodejs to give access to uploads folder
+app.use(express.static("./uploads"))
+
 //DATABASE CONNECTION
-connectDatabase()
+connectDatabase(process.env.MONGO_URI)
 
 // test api to check if server is alive or not
 app.get("/",(req,res)=>{

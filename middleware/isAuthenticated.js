@@ -40,7 +40,7 @@ const isAuthenticated = async (req, res, next) =>{
         next()
         
     } catch (error) {
-        return res.status(400).json({
+        return res.status(500).json({
             message: error.message
         })
     }

@@ -1,5 +1,6 @@
-const Product = require("../../model/productModel")
-const Review = require("../../model/reviewModel")
+const Product = require("../../../model/productModel")
+
+const Review = require("../../../model/reviewModel")
 
 exports.createReview = async(req, res) =>{
     const userId = req.user.id
@@ -29,45 +30,42 @@ exports.createReview = async(req, res) =>{
     })
 }
 
-// GET product review
-exports.getProductReview = async(req, res)=>{
-    const productId = req.params.id
-    if(!productId){
-        return res.status(400).json({
-            message: " Please provide productId"
-        })
-    }
-
-    const productExist = await Product.findById(productId)
-    if(!productExist){
+// GET My reviews
+exports.getMyReviews = async(req, res) =>{
+    const userId = req.user.id
+    const reviews = await Review.find({userId})
+    if(reviews.length == 0){
         return res.status(404).json({
-            message: "Product with that id does not exist"
+            message: "You have not given any review",
+            data : []
         })
     }
-    const reviews = await Review.find({productId}).populate("userId")
     res.status(200).json({
         message: "Review fetched successfully",
         data: reviews
     })
 }
 
-
-// //Check ParamId
-// exports.checkParamsId = (res, checkParam, id) =>{
-//     return res.status(400).json({
-//         message: `Please provide id  ${id}`
-//     })
-// }
-
 // Delete Review 
 exports.deleteReview = async(req, res)=>{
     const reviewId =  req.params.id
-    this.checkParamsId(res,"ReviewId")
+
+    // check if the user created this review
+    const userId = req.user.id
     if(!reviewId){
         return res.status(400).json({
             message: "Please provide reviewId"
         })
     }
+
+    const review = req.findById(reviewId)
+    const ownerIdOfReview = review.userId
+    if(ownerIdOfReview !== userId){
+        return res.status(400).json({
+            message: "You don,t have permission to delete this review"
+        })
+    }
+   
     await Review.findByIdAndDelete(reviewId)
     res.status(200).json({
         message: "Review deleted successfully"

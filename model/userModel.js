@@ -5,7 +5,9 @@ const userSchema = new Schema({
     
     userEmail:{
         type: String,
-        required: [true,'Mail must be provided']
+        required: [true,'Mail must be provided'],
+        unique: true,
+        lowercase : true
     },
     userPhoneNumber: {
         type: Number,

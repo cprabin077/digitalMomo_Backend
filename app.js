@@ -12,6 +12,7 @@ const productRoute = require("./routes/admin/productRoute")
 const adminUsersRoute = require("./routes/admin/adminUsersRoute")
 const userReviewRoute = require("./routes/user/userReviewRoute")
 const profileRoute = require("./routes/user/profileRoute")
+const cartRoute = require("./routes/user/cartRoute")
 
 
 // Routes end here
@@ -42,6 +43,7 @@ app.use("/api/products",productRoute)
 app.use("/api/admin", adminUsersRoute)
 app.use("/api/reviews",userReviewRoute)
 app.use("/api/profile",profileRoute)
+app.use("/api/cart",cartRoute)
 
 
 

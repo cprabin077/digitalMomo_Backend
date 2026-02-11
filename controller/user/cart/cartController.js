@@ -43,7 +43,7 @@ exports.getMyCartItems = async(req, res) =>{
 exports.deleteItemFromCart = async(req, res)=>{
     const {productId} = req.params
     const userId = req.user.id
-    
+
     // check if that product exists or not
     const product = await Product.findById(productId)
     if(!product){
@@ -58,4 +58,5 @@ exports.deleteItemFromCart = async(req, res)=>{
     res.status(200).json({
         message: "Item removed from cart"
     })
-}  
+} 
+

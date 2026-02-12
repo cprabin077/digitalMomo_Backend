@@ -3,6 +3,8 @@ const { connectDatabase } = require("./database/database")
 const app = express()
 
 
+const {Server} = require("socket.io")
+
 
 const { registerUser, loginUser } = require("./controller/auth/authController")
 
@@ -23,6 +25,8 @@ const orderRoute = require("./routes/user/orderRoute")
 //TELL NODE TO USE  DOTENV
 require("dotenv").config()
 
+app.set('view engine','ejs')
+
 app.use(express.json())
 app.use(express.urlencoded({extended : true}))
 
@@ -32,6 +36,9 @@ app.use(express.static("./uploads"))
 //DATABASE CONNECTION
 connectDatabase(process.env.MONGO_URI)
 
+app.get("/chat",(req,res)=>{
+    res.render("home.ejs")
+})
 // test api to check if server is alive or not
 app.get("/",(req,res)=>{
     res.status(200).json({
@@ -55,7 +62,40 @@ app.use("/api/orders", orderRoute)
 
 const PORT = process.env.PORT
 // listen server
-app.listen(3000,()=>{
+const server = app.listen(3000,()=>{
     console.log("server has started at PORT " + PORT)
     //console.log(`server has started at PORT ${PORT} `)
+})
+
+const io = new Server(server,{
+    cors : ["https://104-f-digital-momoadmin.vercel.app/","https://104f-digital-momo-frontend.vercel.app/"]
+})
+
+let onlineUsers = []
+
+const addToOnlineUsers = (socketId,userId,role)=>{
+   onlineUsers =  onlineUsers.filter((user)=>user.userId !== userId)
+    onlineUsers.push({socketId,userId,role})
+    console.log(onlineUsers)
+}
+
+io.on("connection",async (socket)=>{
+   // take the token and validate it 
+   const {token} = socket.handshake.auth 
+   if(token){
+        // validate the token 
+        const decoded = await promisify(jwt.verify)(token,process.env.SECRET_KEY)
+        const doesUserExist =  await User.findOne({_id : decoded.id})
+       if(doesUserExist){
+        addToOnlineUsers(socket.id,doesUserExist.id,doesUserExist.role)
+       }
+
+   }
+
+   socket.on("updateOrderStatus",({status,orderId,userId})=>{
+     const findUser = onlineUsers.find((user)=>user.userId == userId)
+    
+     io.to(findUser.socketId).emit("statusUpdated",{status,orderId})
+   })
+
 })
